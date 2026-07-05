@@ -22,7 +22,7 @@
 
 | 能力 | 你得到什么 |
 |---|---|
-| 风格试衣间 | 4 个互斥方向的真实迷你 mockup 本地预览页，点选/键盘/60s 超时自动推荐，先看后选 |
+| 风格试衣间 | 4 个互斥方向的真实迷你 mockup，生成在 `design-previews/YYYY-MM-DD-任务名/index.html`，点选/键盘回传 |
 | 设计读取 + 三拨盘 | 按任务类型自适应冒险度/动效/密度：功能页收敛、开放命题放开 |
 | AI 反套路禁令 | 禁 AI 紫渐变、禁 Inter、禁斜体、禁居中套路、禁 AI 文案词——从源头消灭"AI 味" |
 | 中文排版规范 | 系统字体栈优先、装饰中文字体子集化、盘古之白、行高/字重/标点纪律 |
@@ -66,8 +66,8 @@ cp -r qiaomu-design ~/.claude/skills/qiaomu-design
 ```
 你：帮我重新设计博客首页
  ↓ Phase 1  诊断：设计读取 + 三拨盘 + 2-3 个关键问题
- ↓ Phase 2  风格试衣间：生成 design-preview.html，4 个方向实际看着选
-            （不选？60 秒后自动按推荐方向继续）
+ ↓ Phase 2  风格试衣间：生成 design-previews/YYYY-MM-DD-任务名/index.html
+            4 个方向实际看着选，点选后回传到 Codex
  ↓ Phase 3  执行：先立 DESIGN.md 锚 → 写码 → preflight 门禁 → 交付
 ```
 
@@ -95,7 +95,11 @@ references/
 ## 限制与边界
 
 - 这是 Claude Code 的 Agent Skill，不是独立软件；效果依赖模型能力
-- 风格试衣间是本地静态 HTML，"点选回传"依赖剪贴板/对话确认，不含服务端
+- 风格试衣间默认生成浅层任务目录：`design-previews/YYYY-MM-DD-任务名/index.html`；
+  当前不在项目中时退到桌面目录；用户可以指定输出目录
+- 点选回传依赖本地预览服务；服务失败时降级为打开 HTML 文件并在对话中回复选择
+- 本 skill 只做设计，不会默认给生成页面注入打赏、公众号、GitHub/X 浮条或乔木个人 Profile；
+  对外页面如需署名，建议只放低干扰页脚 `Powered by 向阳乔木` 链接到 `https://qiaomu.ai/`
 - 58 站 DESIGN.md 库来自公开网站的设计系统提炼，用于风格参考，不代表对应公司背书
 - 装饰性中文字体默认禁用（体积 5-20MB），只在创意标题场景子集化加载——这是特性不是缺陷
 
@@ -103,10 +107,11 @@ references/
 
 MIT License。融合机制来源（详见 SKILL.md 血统说明）：[anthropics/skills](https://github.com/anthropics/skills) · [vercel-labs/web-interface-guidelines](https://github.com/vercel-labs/web-interface-guidelines) · [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) · [emilkowalski/skills](https://github.com/emilkowalski/skills) · [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) · [pbakaus/impeccable](https://github.com/pbakaus/impeccable) · [arvindrk/extract-design-system](https://github.com/arvindrk/extract-design-system) · [mattpocock/skills](https://github.com/mattpocock/skills) · DESIGN.md 库基于 [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)（Google Stitch 格式）
 
-## 关于向阳乔木
+## 版权
 
-- 网站：[qiaomu.ai](https://qiaomu.ai) · 博客：[blog.qiaomu.ai](https://blog.qiaomu.ai) · 工具推荐：[tuijian.qiaomu.ai](https://tuijian.qiaomu.ai)
-- X：[@vista8](https://x.com/vista8) · GitHub：[@joeseesun](https://github.com/joeseesun) · 公众号：向阳乔木推荐看
+MIT License。Copyright (c) 向阳乔木。
+
+项目主页：[qiaomu.ai](https://qiaomu.ai/) · GitHub：[@joeseesun](https://github.com/joeseesun)
 
 ---
 
@@ -126,7 +131,7 @@ Then just ask Claude Code: `redesign my landing page`.
 
 ## What you get
 
-- **Style fitting room**: a local HTML preview with 4 mutually-divergent direction mockups (real fonts/colors/layout). Pick by click or keys; after 60s it auto-advances with the recommended direction.
+- **Style fitting room**: 4 mutually-divergent direction mockups (real fonts/colors/layout) in `design-previews/YYYY-MM-DD-task/index.html`. Pick by click or keys; the local preview server reports the selection back to Codex.
 - **Design read + three dials**: VARIANCE / MOTION / DENSITY auto-tuned per task type — restrained on functional UI, bold on open creative briefs.
 - **Anti-slop bans**: no AI-purple gradients, no Inter, no italics, no centered-hero clichés, no "revolutionary/seamless" copy.
 - **Chinese typography rules**: system font stack first, subset decorative CJK webfonts (5-20 MB otherwise), CJK spacing/punctuation/line-height discipline.
@@ -142,6 +147,6 @@ Every core rule traces back to a controlled experiment: 6 variants × 7 tasks ×
 
 ## Limits
 
-Requires Claude Code. The fitting room is a static local HTML page (selection returns via clipboard/chat). The DESIGN.md library is distilled from public sites for reference, not endorsement.
+Requires Claude Code. The fitting room is a local HTML preview served by a tiny local callback server; if the server cannot start, it falls back to opening the HTML file and asking the user to reply with the selected direction. qiaomu-design does not inject Qiaomu profile widgets into generated pages by default. The DESIGN.md library is distilled from public sites for reference, not endorsement.
 
-MIT © [joeseesun](https://github.com/joeseesun)
+MIT © 向阳乔木 · [qiaomu.ai](https://qiaomu.ai/) · [@joeseesun](https://github.com/joeseesun)
