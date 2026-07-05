@@ -50,7 +50,8 @@ node /Users/joe/.agents/skills/qiaomu-design/scripts/qiaomu-design-preview-serve
   最终页面**；点选方向后才进入正式实现。不要把免责声明、教程或系统说明堆在首屏
 - 若展示设计拨盘，必须使用中文标签和解释：`视觉冒险度`、`动效强度`、`信息密度`；
   可以在括号里保留 `VARIANCE/MOTION/DENSITY`，但不能只显示英文变量名
-- 三拨盘必须是可拖动滑块，默认值来自设计读取；用户调整后，确认选择时随方向一起回传
+- 三拨盘必须是可拖动滑块，默认值来自设计读取；用户调整时页面上的当前数值必须即时变化，
+  无论数值显示节点是 `<output>`、`span` 还是其它 `[data-qmdp-output]` 元素。确认选择时随方向一起回传
 - 每个方向卡片底部有同样样式的明显按钮：`选择 A · 方向名`
 - 点选方向或按键 1-4 后，先打开确认弹层；弹层显示方向名、当前三拨盘值，并提供一个输入框
   让用户写调整建议。只有点击"确认并回传"才写入 `selection.json`
@@ -79,7 +80,9 @@ node /Users/joe/.agents/skills/qiaomu-design/scripts/qiaomu-design-preview-serve
 
 1. **顶部状态条**：任务名 + "方向样机，不是最终 App / 最终页面" + 快捷键提示（1-4）+
    回传状态；不重复按钮已有的选择说明；不放倒计时
-2. **设计样机区 × 4**（固定 A/B/C/D，每个带互斥约束，其中一个标注「推荐」徽标），每个样机块包含：
+2. **设计样机区 × 4**（固定 A/B/C/D，每个带互斥约束，其中一个标注「推荐」徽标），
+   桌面默认使用 2×2 左右两栏网格，移动端收敛为单列；只有方向本身明确需要全宽沉浸带时，
+   才允许改成单列全宽展示，并在验收说明里写清原因。每个样机块包含：
    - **真实迷你 mockup**（核心）：用该方向的真字体、真配色、真布局做一个
      Hero 级别的缩尺片段（约 480×300 逻辑尺寸，`transform: scale` 适配卡宽）。
      必须是真的排版，**不是色板色块 + 字体名列表**——用户要看的是"做出来长什么样"
@@ -164,7 +167,7 @@ node /Users/joe/.agents/skills/qiaomu-design/scripts/qiaomu-design-preview-serve
   .bar{padding:20px 32px;border-bottom:1px solid #ddd;display:flex;justify-content:space-between}
   .dials{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:12px;padding:20px 32px;border-bottom:1px solid #ddd}
   .dial{display:grid;gap:6px;font-size:13px}.dial b{font-weight:650}.dial output{font-variant-numeric:tabular-nums}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;padding:32px}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;padding:32px}
   .card{background:#fff;border:2px solid #e2e2e0;border-radius:12px;overflow:hidden;cursor:pointer}
   .card.selected{border-color:#1a1a1a}
   .mock{height:300px;overflow:hidden;position:relative;display:grid;place-items:center}
@@ -177,15 +180,20 @@ node /Users/joe/.agents/skills/qiaomu-design/scripts/qiaomu-design-preview-serve
   .pickbar{position:fixed;bottom:0;left:0;right:0;padding:14px;background:#1a1a1a;color:#fff;
            text-align:center;transform:translateY(100%);transition:transform 200ms cubic-bezier(.23,1,.32,1)}
   .pickbar.show{transform:translateY(0)}
+  @media (max-width:760px){
+    .bar{padding:16px;gap:12px;flex-wrap:wrap}
+    .dials{grid-template-columns:1fr;padding:16px}
+    .grid{grid-template-columns:1fr;padding:16px}
+  }
 </style>
 </head>
 <body>
   <div class="bar"><strong>{任务名} · 方向样机</strong>
     <span>键盘 1-4 选择 · 确认后回传</span></div>
-  <div class="dials" aria-label="设计拨盘">
-    <label class="dial"><b>视觉冒险度 <output id="varianceOut">7</output></b><input id="variance" type="range" min="1" max="10" value="7"></label>
-    <label class="dial"><b>动效强度 <output id="motionOut">6</output></b><input id="motion" type="range" min="1" max="10" value="6"></label>
-    <label class="dial"><b>信息密度 <output id="densityOut">4</output></b><input id="density" type="range" min="1" max="10" value="4"></label>
+  <div class="dials" data-qmdp-dials aria-label="设计拨盘">
+    <label class="dial"><b>视觉冒险度 <output id="varianceOut" data-qmdp-output="variance">7</output></b><input id="variance" data-qmdp-dial="variance" type="range" min="1" max="10" value="7"></label>
+    <label class="dial"><b>动效强度 <output id="motionOut" data-qmdp-output="motion">6</output></b><input id="motion" data-qmdp-dial="motion" type="range" min="1" max="10" value="6"></label>
+    <label class="dial"><b>信息密度 <output id="densityOut" data-qmdp-output="density">4</output></b><input id="density" data-qmdp-dial="density" type="range" min="1" max="10" value="4"></label>
   </div>
   <div class="grid"><!-- 4 张方向卡片，推荐卡片加 data-rec 与「推荐」徽标 --></div>
   <div class="confirm" id="confirm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
@@ -209,7 +217,7 @@ node /Users/joe/.agents/skills/qiaomu-design/scripts/qiaomu-design-preview-serve
   }
   ['variance','motion','density'].forEach(id => {
     const input = document.getElementById(id), out = document.getElementById(id + 'Out');
-    input.addEventListener('input', () => out.value = input.value);
+    input.addEventListener('input', () => { out.value = input.value; out.textContent = input.value; });
   });
   function selectionText(payload){
     const values = payload.dials || dials();

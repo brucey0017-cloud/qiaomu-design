@@ -193,7 +193,7 @@ const bridgeScript = `
   function ensureShell() {
     if (document.querySelector('.qmdp-frame')) return;
     document.body.classList.add('qmdp-preview-active');
-    const hasNativeDials = Boolean(document.querySelector('[data-qmdp-dials], .qmdp-dials'));
+    const hasNativeDials = Boolean(document.querySelector('[data-qmdp-dials], .qmdp-dials, [data-qmdp-dial]'));
     if (hasNativeDials) document.body.classList.add('qmdp-preview-compact');
     const frame = document.createElement('div');
     frame.className = 'qmdp-frame';
@@ -262,8 +262,14 @@ const bridgeScript = `
 
   function bindDialOutputs() {
     document.querySelectorAll('[data-qmdp-dial]').forEach(input => {
-      const output = document.querySelector('[data-qmdp-output="' + input.dataset.qmdpDial + '"]');
-      const sync = () => { if (output) output.value = input.value; };
+      const outputs = document.querySelectorAll('[data-qmdp-output="' + input.dataset.qmdpDial + '"]');
+      const sync = () => {
+        input.setAttribute('aria-valuenow', input.value);
+        outputs.forEach(output => {
+          output.value = input.value;
+          output.textContent = input.value;
+        });
+      };
       input.addEventListener('input', sync);
       sync();
     });

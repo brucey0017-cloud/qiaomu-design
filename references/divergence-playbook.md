@@ -53,7 +53,7 @@ brutalist/raw（粗野主义，等宽 + 粗黑边框 + ASCII）· industrial/uti
 - 其余方向 → `references/design-systems/{site}/DESIGN.md` 中最接近的站点协议
 
 > 同页实作多个方向时（多样性任务），展示格式必须遵守
-> `assets-and-readability.md` 第四节：每方向全宽沉浸带 + 独立工艺密度 ≥3 + 设计宣言入版面。
+> `assets-and-readability.md` 第四节适用于正式多方向展示：每方向全宽沉浸带 + 独立工艺密度 ≥3 + 设计宣言入版面。Phase 2 风格试衣间按 `style-preview.md` 的桌面 2×2 规则执行。
 
 ## 四、方向呈现格式
 
