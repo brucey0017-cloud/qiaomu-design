@@ -182,6 +182,7 @@ const bridgeScript = `
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'qmdp-pick-button';
+      button.dataset.qmdpInjected = 'true';
       button.textContent = '选择 ' + (payload.id || optionLetters[index] || '') + (payload.name ? ' · ' + payload.name.replace(/^\\d+\\.\\s*/, '') : '');
       button.setAttribute('aria-label', button.textContent);
       el.appendChild(button);
@@ -194,6 +195,8 @@ const bridgeScript = `
   }
 
   document.addEventListener('click', event => {
+    const pickButton = event.target.closest('.qmdp-pick-button');
+    if (pickButton && !pickButton.dataset.qmdpInjected) return;
     const el = event.target.closest(optionSelector);
     if (!el) return;
     const cards = Array.from(document.querySelectorAll(optionSelector));
