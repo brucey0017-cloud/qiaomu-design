@@ -1,5 +1,5 @@
 ---
-name: qiaomu-design-advisor
+name: qiaomu-design
 description: >
   偏执型设计顾问 v2.0（融合版）— Jobs 式产品直觉 + Rams 式功能纯粹主义，融合五大顶级设计 Skill 实测精华
   （Anthropic frontend-design 的美学胆量、Vercel web-design-guidelines 的工程规范、taste-skill 的反模板拨盘、
